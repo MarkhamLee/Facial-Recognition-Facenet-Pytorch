@@ -1,43 +1,7 @@
-## ID Verification with PyTorch, MTCNN and Google's InceptionResnet V1
+## Facial Recognition with Facenet-PyTorch: MTCNN  & Google's InceptionResnet V1
 I spent most of the winter and spring '22 researching, prototyping and testing various approaches to building a solution that could be used for identity verification, where you would take a known photo of someone and compare it to a photo taken as they attempt to enter a high security area. This repo is meant to serve as "lab notes" and a canned demo/starting point for building something like this for someone else in the future, I.e. if nothing else this will save me from having to go through various directories on my dev box eight months from now, trying to figure out what version is the "the one". I.e., it's a starting point for future projects that I may iterate on from time to time.  
 
 <br>
-
-### Updates 9/04/23:
-* Added logging 
-* Added basic unit tests
-* Refactored API calls in Jupyter Notebook, refactored "test_helper" script 
-
-
-### Updates 6/11/23: 
-* Added Jupyter Notebook as a "front-end" allows you to easily input photos and see results, including 
-basic UX as far as green or red tint over photos depending on whether or not they match 
-* Code clean-up, refactoring of methods, in particular simplifying the methods supporting each API endpoint 
-
-
-### Updates 06/07/2023: 
-* Code clean-up, fixed a few issues 
-* Noticed some weirdness with the Euclidian calculations, removed it for now, will re-add in the future 
-* Cleaned up the Readme to hopefully make using this more clear 
-
-
-### Updates 6/04/2023: a few small changes 
-* Added ability to specify distance threshold 
-* Added ability to specify which type of scoring you want to use, I.e., cosine distance or Euclidian distance/L2 
-* Some small refactoring here and there 
-
-
-### Future updates 
-* ~~Add logging: record each incoming API request, messages @ various points for tracking potential errors~~ 
-* ~~Add a Jupyter Notebook "front-end" for easy testing/use without Postman~~ added 6/11/23
-* ~~Add test scripts~~ 
-* Add additional similarity scores/distance measures
-* Add authentication  
-    
-
-## Acknowledgements 
-This project is heavily influenced by [Tim Esler's Facenet-PyTorch repo](https://github.com/timesler/facenet-pytorch) a PyTorch based implementation of Google's Facenet research paper, which is in turn heavily influenced by [David Sandberg's TensorFlow implementation](https://github.com/davidsandberg/facenet) of same. 
-
 
 ## How does it work? 
 **The short answer:** 
@@ -89,8 +53,36 @@ This project is heavily influenced by [Tim Esler's Facenet-PyTorch repo](https:/
 * score_service.py calculates the distance or similarity scores 
 * Running the docker file will build a container and then you can test/experiment via hitting the API with Postman or custom code. 
 
+### Updates 9/04/23:
+* Added logging 
+* Added basic unit tests
+* Refactored API calls in Jupyter Notebook, refactored "test_helper" script 
+
+### Updates 6/11/23: 
+* Added Jupyter Notebook as a "front-end" allows you to easily input photos and see results, including 
+basic UX as far as green or red tint over photos depending on whether or not they match 
+* Code clean-up, refactoring of methods, in particular simplifying the methods supporting each API endpoint 
+
+### Updates 06/07/2023: 
+* Code clean-up, fixed a few issues 
+* Noticed some weirdness with the Euclidian calculations, removed it for now, will re-add in the future 
+* Cleaned up the Readme to hopefully make using this more clear 
+
+### Updates 6/04/2023: a few small changes 
+* Added ability to specify distance threshold 
+* Added ability to specify which type of scoring you want to use, I.e., cosine distance or Euclidian distance/L2 
+* Some small refactoring here and there 
+
+### Future updates 
+* ~~Add logging: record each incoming API request, messages @ various points for tracking potential errors~~ 
+* ~~Add a Jupyter Notebook "front-end" for easy testing/use without Postman~~ added 6/11/23
+* ~~Add test scripts~~ 
+* Add additional similarity scores/distance measures
+* Add authentication  
+    
+
+## Acknowledgements 
+This project is heavily influenced by [Tim Esler's Facenet-PyTorch repo](https://github.com/timesler/facenet-pytorch) a PyTorch based implementation of Google's Facenet research paper, which is in turn heavily influenced by [David Sandberg's TensorFlow implementation](https://github.com/davidsandberg/facenet) of same. 
 
 ## References 
-* [Tim Esler's Facenet-PyTorch Repo](https://github.com/timesler/facenet-pytorch) 
 * [Machine Learning Mastery - How to Develop a Face Recognition System Using FaceNet in Keras](https://machinelearningmastery.com/how-to-develop-a-face-recognition-system-using-facenet-in-keras-and-an-svm-classifier/) 
-
