@@ -4,7 +4,7 @@ import torch.nn.functional as F
 class similarityScore:
 
     # method for calculating cosine distance between two tensors
-    def cosine_score(self, reference, sample):
+    def cosine_score(self, reference: float, sample: float) -> float:
         self.reference = reference
         self.sample = sample
 
@@ -15,7 +15,7 @@ class similarityScore:
 
     # method for calculating match status - putting this into a separate
     # method to accomodate multiple score types
-    def match_status(self, score, threshold):
+    def match_status(self, score: float, threshold: float):
 
         self.threshold = threshold
 

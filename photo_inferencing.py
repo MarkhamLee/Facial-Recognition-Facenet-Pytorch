@@ -23,7 +23,7 @@ class inferencing:
         self.resnet = InceptionResnetV1(pretrained='vggface2',
                                         classify=True).eval().to(self.device)
 
-    def identity_verify(self, reference, sample):
+    def identity_verify(self, reference: object, sample: object) -> object:
         self.reference = reference
         self.sample = sample
 
@@ -38,7 +38,7 @@ class inferencing:
 
         return embeddings_reference, embeddings_sample
 
-    def cached_reference(self, sample):
+    def cached_reference(self, sample: object) -> object:
 
         self.sample = sample
 

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 class TestFunctions:
 
     # this method opens the images and returns the image data
-    def open_images(self, first, second):
+    def open_images(self, first: object, second: object) -> object:
 
         with Image.open(first) as photo1:
             photo1.load()
@@ -22,7 +22,8 @@ class TestFunctions:
         return photo1, photo2
 
     # method to display two photos side by side
-    def show_images(self, imagea, imageb, title="Evaluated Photo"):
+    def show_images(self, imagea: object, imageb: object,
+                    title="Evaluated Photo"):
 
         # create canvas that photos will be plotted on
         figure = plt.figure(figsize=(8, 8))
@@ -39,7 +40,7 @@ class TestFunctions:
     # on the match status expected input is two images that have been opened
     # with the Python Pillow (PIL) library result is a 1 for matched photos
     # 0 for photos that didn't match
-    def display_results(self, imagea, imageb, result):
+    def display_results(self, imagea: object, imageb: object, result: int):
 
         # create required tint: red for no match, green for match
         if result == 0:

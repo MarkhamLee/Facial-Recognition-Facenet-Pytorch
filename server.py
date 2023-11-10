@@ -150,7 +150,8 @@ def cached():
 
 # method that aggregates data, prepares json response and sends the data
 # back to the client
-def build_response(latency, tensor1, tensor2, score_type, threshold):
+def build_response(latency: float, tensor1: object, tensor2: object,
+                   score_type: float, threshold: float) -> dict:
 
     # generate score
     score = scoring.cosine_score(tensor1, tensor2)
