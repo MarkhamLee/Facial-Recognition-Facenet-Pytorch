@@ -49,7 +49,7 @@ def embeddings():
     score_type = request.form.get('type')
     threshold = request.form.get('threshold')
 
-    logger.info(f'Request received @ endpoint for photo pairs, score type: {score_type}, and match threshold: {threshold}')  # noqa: E501
+    logger.info(f'Request received at endpoint for photo pairs, score type: {score_type}, and match threshold: {threshold}')  # noqa: E501
 
     # python parses the data as a string and we need it to be a float to
     # be used for scoring
@@ -97,7 +97,7 @@ def cached():
     score_type = request.form.get('type')
     threshold = request.form.get('threshold')
 
-    logger.info(f'Request received @ cached data endpoint, score type: {score_type}, match threshold: {threshold}')  # noqa: E501
+    logger.info(f'Request received at cached data endpoint, score type: {score_type}, match threshold: {threshold}')  # noqa: E501
 
     # python parses the data as a string as we need it to be a float
     # to be used for scoring
