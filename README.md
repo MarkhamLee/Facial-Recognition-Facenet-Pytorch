@@ -8,7 +8,11 @@ I spent most of the winter and spring '22 researching, prototyping and testing v
     * The machine learning model would need to be fine tuned for the population the solution is being used for
     * Authentication and encryption for the API connections
     * A proxy server and load balancer like NGINX to run in conjunction with Gunicorn. I included Gunicorn with the repo as that's just software driven and you can run that just via doing a quick install. Nginx requires hardware configurations/isn't conducive for a quick cloning of a repo and then running a demo so I left that out. 
-* You can run the API locally on your  machine either by building the docker container and then running the docker container, or from the command line via: gunicorn  --bind 0.0.0.0:6000  wsgi:app
+* You can run the API locally on your  machine either by building the docker container and then running the docker container, or from the command line via: 
+
+```
+gunicorn  --bind 0.0.0.0:6000  wsgi:app
+```
 * The server will run on port 6000, but you can specify any port you like, as long as it isn't already in use. E.g., on OSX Port 5000 is reserved for Airplay  
 * Once the API is running you can either ping the endpoints with custom code or use Postman to test it. If you use Postman:
     * Body --> Form Data --> select files under key, and then use the "select files" button to select your image file or pre-computed tensors that were generated using this same model. Meaning: you'd have to write some code yourself to generate and then store those tensors. 

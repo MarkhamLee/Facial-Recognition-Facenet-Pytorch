@@ -1,6 +1,8 @@
 import torch
-from facenet_pytorch import MTCNN, InceptionResnetV1
 import warnings
+from facenet_pytorch import MTCNN, InceptionResnetV1
+from logging_util import logger
+
 warnings.filterwarnings('ignore')
 
 
@@ -13,15 +15,15 @@ class inferencing:
         # to update the code
         self.device = torch.device('cuda:0' if torch.cuda.is_available()
                                    else 'cpu')
-        print('Running on device: {}'.format(self.device))
+        logger.info('Running on device: {}'.format(self.device))
 
         # Instantiate face detection class
         self.mtcnn = MTCNN(160, 30, 20, [0.6, 0.7, 0.7], 0.709, True, True,
                            None, False, device=self.device)
 
         # Instantiate Resnet for Facial Geometry (Embeddings)
-        self.resnet = InceptionResnetV1(pretrained='vggface2',
-                                        classify=True).eval().to(self.device)
+        self.resnet = InceptionResnetV1(pretrained='vggface2').\
+            eval().to(self.device)
 
     def identity_verify(self, reference: object, sample: object) -> object:
         self.reference = reference
@@ -32,7 +34,6 @@ class inferencing:
         reference_cropped = self.mtcnn(self.reference).to(self.device)
         sample_cropped = self.mtcnn(self.sample).to(self.device)
 
-        # generate embeddings
         embeddings_reference = self.resnet(reference_cropped.unsqueeze(0))
         embeddings_sample = self.resnet(sample_cropped.unsqueeze(0))
 
@@ -46,6 +47,7 @@ class inferencing:
         sample_cropped = self.mtcnn(self.sample).to(self.device)
 
         # generate embeddings
-        embeddings_sample = self.resnet(sample_cropped.unsqueeze(0))
+        embeddings_sample = self.resnet(sample_cropped.unsqueeze(0)).\
+            detach().cpu()
 
         return embeddings_sample

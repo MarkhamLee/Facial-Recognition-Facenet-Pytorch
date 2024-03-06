@@ -1,12 +1,10 @@
-FROM python:3.9.10-slim-buster
+FROM python:alpine as build
 
 COPY requirements.txt ./requirements.txt
 RUN pip3 install -r /requirements.txt
 
-COPY wsgi.py .
-COPY server.py .
-COPY photo_inferencing.py .
-COPY score_service.py .
+COPY wsgi.py . server.py photo_inferencing.py score_service.py logging_util.py ./
+
 
 EXPOSE 6000
 
