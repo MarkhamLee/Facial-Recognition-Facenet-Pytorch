@@ -1,9 +1,7 @@
 # Logging script - writes all data to stdout so that it can be picked up
 # by container orchestration tools like Kubernetes
-
 import logging
 from sys import stdout
-
 
 # set up/configure logging via stdout so it can be picked up by K8s
 logger = logging.getLogger('telemetry_logger')

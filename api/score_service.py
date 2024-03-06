@@ -1,3 +1,8 @@
+# (C) Markham 2022 - 2024
+# Facial-Recognition-Facenet-Pytorch
+# Flask based API wrapper around the Facenet-PyTorch facial recognition library
+# This script calculates cosine distance and does the comparison to the
+# provided threshold.
 import torch
 import torch.nn.functional as F
 from logging_util import logger

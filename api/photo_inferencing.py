@@ -1,3 +1,6 @@
+# (C) Markham 2022 - 2024
+# Facial-Recognition-Facenet-Pytorch
+# Flask based API wrapper around the Facenet-PyTorch facial recognition library
 import torch
 import warnings
 from facenet_pytorch import MTCNN, InceptionResnetV1
@@ -37,6 +40,8 @@ class inferencing:
         embeddings_reference = self.resnet(reference_cropped.unsqueeze(0))
         embeddings_sample = self.resnet(sample_cropped.unsqueeze(0))
 
+        logger.debug('Embeddings generated for photo pair')
+
         return embeddings_reference, embeddings_sample
 
     def cached_reference(self, sample: object) -> object:
@@ -49,5 +54,7 @@ class inferencing:
         # generate embeddings
         embeddings_sample = self.resnet(sample_cropped.unsqueeze(0)).\
             detach().cpu()
+
+        logger.debug('Embeddings generated for single photo/cached tensor workflow')  # noqa: E501
 
         return embeddings_sample

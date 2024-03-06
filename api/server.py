@@ -1,3 +1,8 @@
+# (C) Markham 2022 - 2024
+# Facial-Recognition-Facenet-Pytorch
+# Flask based API wrapper around the Facenet-PyTorch facial recognition library
+# This script is specifically for the API, receives requests, communicates back
+# to the client, etc.
 import flask
 import json
 import torch

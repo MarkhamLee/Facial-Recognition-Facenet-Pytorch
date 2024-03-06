@@ -7,8 +7,6 @@ opencv-python==4.8.0.74
 pandas==2.0.3
 pillow>=10.0.1
 requests==2.31.0
-scipy==1.11.1
 torch==2.0.1
-torchaudio==2.0.2
 torchvision==0.15.2
 Werkzeug==3.0.1
