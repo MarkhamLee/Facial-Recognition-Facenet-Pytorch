@@ -27,6 +27,6 @@ jobs:
         with:
           context: ./api
           file: ./api/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: markhamlee/facerec:latest
