@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from logging_util import logger
 
 
-class similarityScore:
+class SimilarityScore:
 
     # method for calculating cosine distance between two tensors
     @staticmethod

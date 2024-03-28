@@ -10,7 +10,7 @@ warnings.filterwarnings('ignore')
 
 
 # face detection & embeddings
-class inferencing:
+class Inferencing:
 
     def __init__(self):
 

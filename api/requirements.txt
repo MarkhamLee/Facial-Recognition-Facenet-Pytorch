@@ -7,3 +7,4 @@ pillow>=10.0.1
 requests==2.31.0
 torch
 Werkzeug==3.0.1
+paho-mqtt

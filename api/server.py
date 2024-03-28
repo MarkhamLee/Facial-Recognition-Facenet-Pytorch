@@ -5,25 +5,34 @@
 # to the client, etc.
 import flask
 import json
-import torch
+import os
 import time
+import torch
 from PIL import Image
 from flask import Flask, request
-from photo_inferencing import inferencing
-from score_service import similarityScore
+from photo_inferencing import Inferencing
+from score_service import SimilarityScore
 from logging_util import logger
+from monitoring import ReportingCommunication
 
 app = Flask('Identity')
 
 # instantiate the class with the ML models
-photo_match = inferencing()
-
+photo_match = Inferencing()
 logger.info('ML models instantiated')
 
 # instantiate the class with the scoring functionality
-scoring = similarityScore()
+scoring = SimilarityScore()
+logger.info('Scoring/similarity class instantiated')
 
-logger.info('scoring/similarity class instantiated')
+# instantiate the communications class
+com_utilities = ReportingCommunication()
+
+# get MQTT Client
+mqttClient = com_utilities.mqttClient()
+logger.info('Communications class instantiated')
+
+MONITORING_TOPIC = os.environ['TOPIC']
 
 
 # endpoint for API health check
@@ -83,8 +92,10 @@ def embeddings():
     resultjson = build_response(latency, ref_tensor, sample_tensor,
                                 score_type, threshold)
 
-    # log response and send back to client
-    logger.info(f'response sent back to client {resultjson}')
+    # send data to MQTT topic for data logging/real time monitoring
+    mqttClient.publish(MONITORING_TOPIC, resultjson)
+
+    logger.info('response sent back to client')
     return flask.Response(response=resultjson, status=200,
                           mimetype='application/json')
 
@@ -131,8 +142,6 @@ def cached():
     resultjson = build_response(latency, cached_tensor, sample_tensor,
                                 score_type, threshold)
 
-    app.logger.info(f'response sent back to client {resultjson}')
-
     return flask.Response(response=resultjson, status=200,
                           mimetype='application/json')
 
@@ -158,11 +167,11 @@ def build_response(latency: float, tensor1: object, tensor2: object,
     latency_message = str(latency) + " ms"
 
     # return data
-    results = {"Match Status": status,
-               "Score": score,
-               "Score Type": 'cosine distance',
-               "Score Threshold": threshold,
-               "Inferencing Latency": latency_message}
+    results = {"match_status": status,
+               "score": score,
+               "score_type": 'cosine distance',
+               "score_threshold": threshold,
+               "Inferencing_latency": latency_message}
 
     resultjson = json.dumps(results)
 
