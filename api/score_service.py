@@ -17,7 +17,7 @@ class SimilarityScore:
         cosd = F.cosine_similarity(reference, sample)
         score = (1 - cosd.item())
 
-        logger.debug(f'Cosine distance calculated: {score}')
+        logger.info(f'Cosine distance calculated: {score}')
 
         return score
 
@@ -35,7 +35,7 @@ class SimilarityScore:
         # pull the float value out of the tensor object
         dist = dist.item()
 
-        logger.debug(f'Euclidean distance is: {dist}')
+        logger.info(f'Euclidean distance is: {dist}')
 
         return dist
 

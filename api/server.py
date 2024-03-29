@@ -29,10 +29,15 @@ logger.info('Scoring/similarity class instantiated')
 com_utilities = ReportingCommunication()
 
 # get MQTT Client
-mqttClient = com_utilities.mqttClient()
+
+# get client ID
+client_id = com_utilities.get_client_id()
+
+# mqtt client
+mqttClient, code = com_utilities.mqttClient(client_id)
 logger.info('Communications class instantiated')
 
-MONITORING_TOPIC = os.environ['TOPIC']
+MONITORING_TOPIC = os.environ['MONITORING_TOPIC']
 
 
 # endpoint for API health check
@@ -93,7 +98,7 @@ def embeddings():
                                 score_type, threshold)
 
     # send data to MQTT topic for data logging/real time monitoring
-    mqttClient.publish(MONITORING_TOPIC, resultjson)
+    send_monitoring_message(resultjson)
 
     logger.info('response sent back to client')
     return flask.Response(response=resultjson, status=200,
@@ -141,6 +146,10 @@ def cached():
     # and builds response payload
     resultjson = build_response(latency, cached_tensor, sample_tensor,
                                 score_type, threshold)
+    logger.info(resultjson)
+
+    # send data to MQTT topic for data logging/real time monitoring
+    send_monitoring_message(resultjson)
 
     return flask.Response(response=resultjson, status=200,
                           mimetype='application/json')
@@ -148,6 +157,8 @@ def cached():
 
 # method that aggregates data, prepares json response and sends the data
 # back to the client
+# TODO: move this and the methods below to a separate class, add field
+# for the endpoint the data was received on.
 def build_response(latency: float, tensor1: object, tensor2: object,
                    score_type: float, threshold: float) -> dict:
 
@@ -169,16 +180,18 @@ def build_response(latency: float, tensor1: object, tensor2: object,
     # return data
     results = {"match_status": status,
                "score": score,
-               "score_type": 'cosine distance',
+               "score_type": score_type,
                "score_threshold": threshold,
-               "Inferencing_latency": latency_message}
+               "inferencing_latency": latency_message}
 
     resultjson = json.dumps(results)
 
     return resultjson
 
 
-def load_images(image):
+# loading images
+# TODO: may need to add transformations in the future
+def load_images(image: object) -> object:
 
     with Image.open(image) as photo:
         photo.load()
@@ -186,3 +199,15 @@ def load_images(image):
     app.logger.info('photo loaded')
 
     return photo
+
+
+# TODO: add QOS parameters and message re-send logic
+def send_monitoring_message(message: dict):
+
+    try:
+        result = mqttClient.publish(MONITORING_TOPIC, message)
+        status = result[0]
+        logger.info(f'Monitoring message sent successfully with status {status}')  # noqa: E501
+
+    except Exception as e:
+        logger.error(f'MQTT publishing failed with error: {e}')

@@ -15,22 +15,20 @@ class ReportingCommunication:
         # load variables
         self.load_variables()
 
-        # get MQTT clientID
-        self.clientID = str(uuid.uuid4())
-
-        # get MQTT client
-        self.client = self.mqttClient()
-
     # Load variables
     def load_variables(self):
 
-        self.userName = os.environ['MQTT_USER']
+        self.user_name = os.environ['MQTT_USER']
         self.pwd = os.environ['MQTT_SECRET']
         self.host = os.environ['MQTT_BROKER']
-        self.port = os.environ['MQTT_PORT']
+        self.port = int(os.environ['MQTT_PORT'])
+
+    def get_client_id(self):
+
+        return str(uuid.uuid4())
 
     # Generate MQTT client
-    def mqttClient(self):
+    def mqttClient(self, client_id):
 
         def connectionStatus(client, userdata, flags, code):
 
@@ -40,8 +38,8 @@ class ReportingCommunication:
             else:
                 logger.debug(f'connection error occured, return code: {code}, retrying...')  # noqa: E501
 
-        client = mqtt.Client(self.clientID)
-        client.username_pw_set(username=self.userName, password=self.pwd)
+        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, client_id)
+        client.username_pw_set(username=self.user_name, password=self.pwd)
         client.on_connect = connectionStatus
 
         code = client.connect(self.host, self.port)
