@@ -1,7 +1,7 @@
 # (C) Markham 2022 - 2024
 # Facial-Recognition-Facenet-Pytorch
 # Flask based API wrapper around the Facenet-PyTorch facial recognition library
-# Utilities for instrumentation/reporting the like
+# Utilities for monitoring, reporting, instrumentation and the like
 import os
 import uuid
 from paho.mqtt import client as mqtt
@@ -28,7 +28,7 @@ class ReportingCommunication:
         return str(uuid.uuid4())
 
     # Generate MQTT client
-    def mqttClient(self, client_id):
+    def mqttClient(self, client_id: object):
 
         def connectionStatus(client, userdata, flags, code):
 

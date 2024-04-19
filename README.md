@@ -1,52 +1,84 @@
 ## Facial Recognition with Facenet-PyTorch: MTCNN & Google's InceptionResnet V1
-I spent most of the winter and spring '22 researching, prototyping and testing various approaches to building a solution that would use facial recognition for identity verification, where you would take a known photo of someone and compare it to a photo taken as they attempt to enter a high security area. This repo is meant to serve as "lab notes" or a canned demo/starting point for building something like this for someone else in the future, I.e. if nothing else this will save me from having to go through various directories on my dev box eight months from now, trying to figure out what version is the "the one". I.e., it's a starting point for future projects that I may iterate on from time to time.  
+I spent most of the winter and spring '22 researching, prototyping, and testing various approaches to building a solution that would use facial recognition for identity verification. Think: comparing photos taken of someone “the day of” with a reference photo. This repo is meant to serve as "lab notes" and/or a starting point for building similar solutions in the future.   
 
-## How does it work? 
-**The short answer:** 
-* It's a Flask API and Gunicorn based wrapper around the [Facenet-PyTorch repo](https://github.com/timesler/facenet-pytorch), with a number of functional and machine learning based enhancements to make an easy to depoloy/use it as a facial identity solution, I.e. I took it a bit further and added cosine and euclidian distance calculations to determine if two photos are of the same individual. Note: the solution is built based on the presumption that the user already has a method for capturing photos and presenting them to the API. 
-* This isn't production ready (yet) as the solution would need (at the very least):
-    * The machine learning model would need to be fine tuned for the population the solution is being used for
-    * Authentication and encryption for the API connections
-    * A proxy server and load balancer like NGINX to run in conjunction with Gunicorn. I included Gunicorn with the repo as that's just software driven and you can run that just via doing a quick install. Nginx requires hardware configurations/isn't conducive for a quick cloning of a repo and then running a demo so I left that out. 
-* You can run the API locally on your  machine either by building the docker container and then running the docker container, or from the command line via: 
+### Recent Updates
+
+#### 03/29/2024
+Made several updates over the last couple of weeks 
+* Real time monitoring via MQTT & InfluxDB - e.g., tracking match %, inferencing latency and similarity over time 
+* Added Github Actions configs to automatically build multi-architecture images whenever new code is pusehd to the repo 
+* General refactoring, cleaned up the Euclidean similarity calculation 
+
+#### 11/10/2023
+* Refactored unit tests, cleaned up code, better comments, annotations, etc.
+
+#### 9/04/23:
+* Added logging 
+* Added basic unit tests
+* Refactored API calls in Jupyter Notebook, refactored "test_helper" script 
+
+### How does it work? 
+#### The Short Answer:
+* It is a Flask and Gunicorn based API wrapper around the [Facenet-PyTorch repo](https://github.com/timesler/facenet-pytorch), with enhancements to make it easy to demo, test or iterate on for a production level solution: monitoring of match results, separate endpoints for two photos vs. a photo and a previously generated embedding, unit tests, etc. Note: the solution is built based on the presumption that the user already has a method for capturing photos and presenting them to the API.  
+
+* There is an endpoint for presenting two photos “photo_match” and an endpoint for presenting a pre-calculated tensor and a photo “cached_endpoint”; both endpoints return a json with details on the photo match including inferencing speed, math result and similarity score 
+
+* You can run the API locally on your machine either by building the docker container and then running the docker container, or from the command line via: 
 
 ```
 gunicorn  --bind 0.0.0.0:6000  wsgi:app
 ```
-* The server will run on port 6000, but you can specify any port you like, as long as it isn't already in use. E.g., on OSX Port 5000 is reserved for Airplay  
-* Once the API is running you can either ping the endpoints with custom code or use Postman to test it. If you use Postman:
-    * Body --> Form Data --> select files under key, and then use the "select files" button to select your image file or pre-computed tensors that were generated using this same model. Meaning: you'd have to write some code yourself to generate and then store those tensors. 
-* note: for threshold I suggest 0.4 for cosine distance. You specify threshold as "threshold" in your API call, and the scoring type as "type", for now there is just cosine distance, will add other distance measures in the future. Meaning: it doesn't currently matter what distance measure you specify it will always be cosine. 
+Note: the above command will only work on Unix based systems, e.g., Linux and OSX. I have had no problems running the container on Windows based systems, but please be aware that I do 95-98% of my development work for computer vision on Linux. 
 
-**The long answer:**
-* presenting two photos to the /photo_match endpoint via a POST operation returns a JSON with details on the photo match 
-* Presenting pre-generated tensors of the reference photo and a recent sample photo to the cached_photo endpoint does the same as the above 
-* If more than one face is detected in the sample photo, the solution will attempt to match each face in the photo to the reference photo 
-* The default matching method is cosine distance, plan to add Euclidian distance in the near future 
-* The "distance" features are provided via built in functions of PyTorch 
-* Matches are calculated via taking a pair of embeddings and calculting the "distance" between them using cosine distance 
+* There is also a Jupyter notebook that's preconfigured to connect to the API, which you can use to run quick tests, demos, etc.
+
+
+#### The Longer Answer 
+
+It is a Flask, Gunicorn and PyTorch based solution for facial recognition, good enough for demos and a foundation for building something that is more production ready. While it would ideally be run on hardware with a GPU, if you are running it on hardware with compute power equivalent to an Intel 11th gen i5 it will run more than fast enough for a demo. 
+
+If I were to implement this, my architectural approach would be to split out machine learning components that generate embeddings away from the rest of the solution and deploy it on GPU enabled hardware. I.e., the part that receives photos, retrieves reference data, and calculates similarity scores can be on slower/cheaper hardware and the dedicated machine learning components can run on more expensive GPU based hardwar  
+
+* The server will run on port 6000, but you can specify any port you like, provided it isn't already in use. E.g., on OSX Port 5000 is reserved for Airplay   
+
+* Once the API is running you can either ping the endpoints with custom code or use Postman to test it. If you use Postman: 
+
+    * Body --> Form Data --> select files under key, and then use the "select files" button to select your image file or pre-computed tensors that were generated using this same model. Meaning: you would have to write some code yourself to generate and then store those tensors.  
+    * You need to specify the similarity threshold as “threshold” and the match type as “cosine,” I suggest 0.4 for the threshold. Note: it will always default to cosine similarity, including type is just a placeholder that may be used for future features. 
+
+* Presenting two photos to the /photo_match endpoint via a POST operation returns a JSON with details on the photo match  
+
+* Presenting pre-generated tensors of the reference photo and a recent sample photo to the cached_photo endpoint does the same as the above. Note: the tensors will need to be generated with the same “device type” this solution is running on, e.g., CPU tensors if running on a CPU, GPU if running on a GPU. 
+
+* If more than one face is detected in the sample photo, the solution will attempt to match each face in the photo to the reference photo, so try to use photos that only have one person in them. 
+
+* Getting this close to production ready would require, at the very least:     
+    * The machine learning model would need to be fine-tuned for the population the solution is being used for. I cannot stress this one enough, what is here is good enough for a demo, but the model would absolutely need to be retrained to use in a production scenario. 
+    * Authentication and encryption for the API connections 
+    * A proxy server and load balancer like NGINX to run in conjunction with Gunicorn. I included Gunicorn with the repo as that's just software driven, and you can run that just via doing a quick install, while Nginx requires hardware configurations/is not conducive for a quick cloning of a repo and then running a demo, so I left that out.  
+    * You would need to build out the infrastructure for capturing photos and storing cached photos, tensors, etc. 
 
 ## Technical Details - What's Under The Hood: 
-* Facenet-PyTorch is deployed via a Flask and Gunicorn API based Docker Inferencing container OR you can run the gunicorn server directly on your machine IF it's a Unix based OS like OSX or Ubuntu, Windows users will need to run the docker container to use this. 
-* MTCNN hyper-parameters were tweaked to increase face detection accuracy 
-* PyTorch's built in functions for cosine and Euclidan distance were used to calculate photo similarity. 
-* An ideal implementation would use reference photos for which embeddings have already been generated, and then compare those photos to a sample photo. 
-* You can run as many workers as your hardware can support for the gunicorn/entrypoint server, but be aware that this would create separate instances of the ML models, which would take up a lot of memory. I.e. for a production level instance you'd need to decouple the front end that receives photos from the ML piece, but it depends on how many matches you're doing per a given unit of time. 
-* This was originally built on a MacBook running OSX and then tested (for GPU acceleration) on Ubuntu 20.04 with an NVIDIA GPU; in recent months I've also successfully tested it/run it on the following hardware and OS combinations:
-    * **Intel x86 devices:** running Ubuntu 22.04 with and without an NVIDIA GPU
-    * **ARM Devices:** Raspberry Pi 4B: Raspian, Ubuntu; Orange PI 5 Plus: Armbian, Ubuntu; Orange Pi 3B: Armbian; Libre Le Potato running Raspian. 
-    * **AMD x86 devices:** 5560U running Ubuntu 22.04.
-* If you use this on a Windows device you would have to test via running the docker container, you can't just test the individual components like guinicorn + flask separately without using Docker as gunicorn only runs on Unix based operating systems. 
+* Facenet-PyTorch is deployed via a Flask and Gunicorn API based Docker Inferencing container OR you can run the Gunicorn server directly on your machine IF it is a Unix based OS like OSX or Ubuntu, Windows users will need to run the docker container to use this.  
+* MTCNN hyper-parameters were tweaked to increase face detection accuracy  
+* PyTorch's built in functions for cosine and Euclidean distance were used to calculate photo similarity.  
+* An ideal implementation would use reference photos for which embeddings have already been generated, and then compare those photos to a sample photo.  
+
+* This was originally built on a MacBook running OSX and then tested (for GPU acceleration) on Ubuntu 20.04 with an NVIDIA GPU; in recent months I've also successfully tested it/run it on the following hardware and OS combinations: 
+    * **Intel x86 devices:** running Ubuntu 22.04 with and without an NVIDIA GPU 
+    * **ARM Devices:** Raspberry Pi 4B: Raspbian, Ubuntu; Orange PI 5 Plus: Armbian, Ubuntu; Orange Pi 3B: Armbian; Libre Le Potato running Raspbian.  
+    * **AMD64 devices:** 5560U running Ubuntu 22.04. 
+
+* If you use this on a Windows device you would have to test via running the docker container, you cannot just test the individual components like Guinicorn + Flask without using Docker as gunicorn only runs on Unix based operating systems. 
 
 ### API Details 
-   * /ping just returns an "OK" if the API is running properly 
-   * Hitting the /photo_match endpoint with a pair of photos (reference or known photo vs a sample photo) returns a JSON with the following information:
-        * Match success (yes/no)
-        * Cosine distance, where <0.4 = a match
-        * Face Detection probabilities for the face detection part of the detection pipeline
-        * Inferencing latency: how long did it take to match the photos 
-    
-   * the cached_data endpoint allows you to pass a photo along with a set of tensors for a cached or pre-processed reference photo 
+   * /ping just returns an "OK" if the API is running properly  
+   * Hitting the /photo_match endpoint with a pair of photos (reference or known photo vs a sample photo) returns a JSON with the following information: 
+        * Match success (yes/no) 
+        * Cosine distance, where <0.4 = a match 
+        * Face Detection probabilities for the face detection part of the detection pipeline 
+        * Inferencing latency: how long did it take to match the photos  
+   * The “/cached_data” endpoint allows you to pass a photo along with a set of tensors for a cached or pre-processed reference photo 
 
 ### Included files 
 * server.py runs the Flask API - see the "short answer" under "How does it work?" for the command line instructions 
@@ -54,33 +86,7 @@ gunicorn  --bind 0.0.0.0:6000  wsgi:app
 * score_service.py calculates the distance or similarity scores 
 * Running the docker file will build a container and then you can test/experiment via hitting the API with Postman or custom code. 
 
-### Updates 9/04/23:
-* Added logging 
-* Added basic unit tests
-* Refactored API calls in Jupyter Notebook, refactored "test_helper" script 
 
-### Updates 6/11/23: 
-* Added Jupyter Notebook as a "front-end" allows you to easily input photos and see results, including 
-basic UX as far as green or red tint over photos depending on whether or not they match 
-* Code clean-up, refactoring of methods, in particular simplifying the methods supporting each API endpoint 
-
-### Updates 06/07/2023: 
-* Code clean-up, fixed a few issues 
-* Noticed some weirdness with the Euclidian calculations, removed it for now, will re-add in the future 
-* Cleaned up the Readme to hopefully make using this more clear 
-
-### Updates 6/04/2023: a few small changes 
-* Added ability to specify distance threshold 
-* Added ability to specify which type of scoring you want to use, I.e., cosine distance or Euclidian distance/L2 
-* Some small refactoring here and there 
-
-### Future updates 
-* ~~Add logging: record each incoming API request, messages @ various points for tracking potential errors~~ 
-* ~~Add a Jupyter Notebook "front-end" for easy testing/use without Postman~~ added 6/11/23
-* ~~Add test scripts~~ 
-* Add additional similarity scores/distance measures
-* Add authentication  
-    
 ## Acknowledgements 
 This project is heavily influenced by [Tim Esler's Facenet-PyTorch repo](https://github.com/timesler/facenet-pytorch) a PyTorch based implementation of Google's Facenet research paper, which is in turn heavily influenced by [David Sandberg's TensorFlow implementation](https://github.com/davidsandberg/facenet) of same. 
 

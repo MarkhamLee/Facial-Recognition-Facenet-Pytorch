@@ -2,7 +2,8 @@
 # Facial-Recognition-Facenet-Pytorch
 # Flask based API wrapper around the Facenet-PyTorch facial recognition library
 # This script is specifically for the API, receives requests, communicates back
-# to the client, etc.
+# to the client, etc. Real time monitoring of match results via an MQTT broker
+# and InfluxDB.
 import flask
 import json
 import os
