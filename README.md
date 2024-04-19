@@ -1,4 +1,4 @@
-## Facial Recognition with Facenet-PyTorch: MTCNN & Google's InceptionResnet V1
+### Facial Recognition with Facenet-PyTorch: MTCNN & Google's InceptionResnet V1
 I spent most of the winter and spring '22 researching, prototyping, and testing various approaches to building a solution that would use facial recognition for identity verification. Think: comparing photos taken of someone “the day of” with a reference photo. This repo is meant to serve as "lab notes" and/or a starting point for building similar solutions in the future.   
 
 ### Recent Updates
@@ -58,7 +58,7 @@ If I were to implement this, my architectural approach would be to split out mac
     * A proxy server and load balancer like NGINX to run in conjunction with Gunicorn. I included Gunicorn with the repo as that's just software driven, and you can run that just via doing a quick install, while Nginx requires hardware configurations/is not conducive for a quick cloning of a repo and then running a demo, so I left that out.  
     * You would need to build out the infrastructure for capturing photos and storing cached photos, tensors, etc. 
 
-## Technical Details - What's Under The Hood: 
+### Technical Details - What's Under The Hood: 
 * Facenet-PyTorch is deployed via a Flask and Gunicorn API based Docker Inferencing container OR you can run the Gunicorn server directly on your machine IF it is a Unix based OS like OSX or Ubuntu, Windows users will need to run the docker container to use this.  
 * MTCNN hyper-parameters were tweaked to increase face detection accuracy  
 * PyTorch's built in functions for cosine and Euclidean distance were used to calculate photo similarity.  
@@ -87,8 +87,8 @@ If I were to implement this, my architectural approach would be to split out mac
 * Running the docker file will build a container and then you can test/experiment via hitting the API with Postman or custom code. 
 
 
-## Acknowledgements 
+### Acknowledgements 
 This project is heavily influenced by [Tim Esler's Facenet-PyTorch repo](https://github.com/timesler/facenet-pytorch) a PyTorch based implementation of Google's Facenet research paper, which is in turn heavily influenced by [David Sandberg's TensorFlow implementation](https://github.com/davidsandberg/facenet) of same. 
 
-## References 
+### References 
 * [Machine Learning Mastery - How to Develop a Face Recognition System Using FaceNet in Keras](https://machinelearningmastery.com/how-to-develop-a-face-recognition-system-using-facenet-in-keras-and-an-svm-classifier/) 

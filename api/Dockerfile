@@ -1,11 +1,20 @@
-FROM python:3.11-slim as build
+FROM python:3.12-slim as builder
 
-COPY requirements.txt ./requirements.txt
-RUN pip3 install -r /requirements.txt
+WORKDIR /app
 
-COPY wsgi.py server.py photo_inferencing.py monitoring.py score_service.py logging_util.py ./
+COPY requirements.txt .
 
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+
+FROM python:3.12.2-slim
+
+COPY --from=builder /app/wheels /wheels
+COPY --from=builder /app/requirements.txt .
+
+RUN pip install --no-cache /wheels/*
+
+COPY *.py ./
 
 EXPOSE 6000
 
-CMD ["gunicorn" , "--bind", "0.0.0.0:6000",  "wsgi:app"]
+ENTRYPOINT ["gunicorn" , "--bind", "0.0.0.0:6000",  "wsgi:app"]
