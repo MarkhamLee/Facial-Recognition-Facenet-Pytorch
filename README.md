@@ -3,6 +3,10 @@ I spent most of the winter and spring '22 researching, prototyping, and testing 
 
 ### Recent Updates
 
+#### 04/19/2024 - Security Updates
+*  Updated the Dockerfile to be smaller and more secure by moving to a two-stage build. The final image is ~2.1GB smaller and has a smaller risk surface area because the tools used to build the Python dependencies are only used in the first/build stage and are then dropped from the final image, as the fully built Python dependencies are just copied over. 
+* Updated base image and Python dependencies to address security issues 
+
 #### 03/29/2024
 Made several updates over the last couple of weeks 
 * Real time monitoring via MQTT & InfluxDB - e.g., tracking match %, inferencing latency and similarity over time 
