@@ -1,0 +1,14 @@
+2024-05-10 13:19:30,769 - INFO - facenet_benchmarking.py - Running on device: cuda:0
+2024-05-10 13:19:31,088 - INFO - facenet_benchmarking.py - file lists created
+2024-05-10 13:19:35,743 - INFO - facenet_benchmarking.py - Testing complete, calculating stats....
+2024-05-10 13:19:35,748 - INFO - facenet_benchmarking.py - Testing Results: 
+   photos  with_warmp(ms)  overall(ms)  overall_stdev(ms)  face_detection(ms)  embedding(ms)
+0      40            93.4        33.75                4.9               20.09          12.23
+
+2024-05-10 13:19:51,122 - INFO - facenet_benchmarking.py - Running on device: cuda:0
+2024-05-10 13:19:51,438 - INFO - facenet_benchmarking.py - file lists created
+2024-05-10 13:19:56,128 - INFO - facenet_benchmarking.py - Testing complete, calculating stats....
+2024-05-10 13:19:56,133 - INFO - facenet_benchmarking.py - Testing Results: 
+   photos  with_warmp(ms)  overall(ms)  overall_stdev(ms)  face_detection(ms)  embedding(ms)
+0      40            93.8         34.5               5.52               20.58          12.97
+
