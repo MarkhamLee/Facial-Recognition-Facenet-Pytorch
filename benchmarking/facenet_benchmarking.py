@@ -1,6 +1,12 @@
 # (C) Markham 2022 - 2024
 # Facial-Recognition-Facenet-Pytorch
-# Flask based API wrapper around the Facenet-PyTorch facial recognition library
+# Benchmarking Script for ML components, i.e., MTCNN for 
+# face detection and InceptionResnetV1 for generating
+# embeddings.
+# Usage: test = FacenetBenchmarking("test_photos/", "cached_gpu_tensors/")
+# where the first parameter are your photos and the second one is
+# precomputed tensors. The script will return a dataframe with your testing
+# data in it as well as write it to a log file.
 import os
 import torch
 import pandas as pd
