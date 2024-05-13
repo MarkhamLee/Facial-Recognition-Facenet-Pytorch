@@ -39,6 +39,7 @@ class LoggingUtilities():
         handler.setLevel(logging.DEBUG)
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')  # noqa: E501
         handler.setFormatter(formatter)
+        stream_handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.addHandler(stream_handler)
         logger.propagate = False

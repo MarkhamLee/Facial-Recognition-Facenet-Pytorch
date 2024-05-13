@@ -1,6 +1,6 @@
 # (C) Markham 2022 - 2024
 # Facial-Recognition-Facenet-Pytorch
-# Benchmarking Script for ML components, i.e., MTCNN for 
+# Benchmarking Script for ML components, i.e., MTCNN for
 # face detection and InceptionResnetV1 for generating
 # embeddings.
 # Usage: test = FacenetBenchmarking("test_photos/", "cached_gpu_tensors/")
@@ -165,4 +165,4 @@ class FacenetBenchmarking:
         return stats_df
 
 
-test = FacenetBenchmarking("test_photos/", "cached_gpu_tensors/")
+test = FacenetBenchmarking("test_photos/", "cached_cpu_tensors/")
