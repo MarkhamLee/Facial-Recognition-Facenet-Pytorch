@@ -15,17 +15,24 @@ class GeneralUtils():
     def get_file_list(path: str):
 
         file_list = list()
+        name_list = list()
 
         for (dirpath, dirnames, filenames) in os.walk(path):
             filenames.sort()
             file_list += [os.path.join(dirpath, file) for file in filenames]
 
-        return file_list
+            # split off the file extension from each file name, as we'll
+            # keep the file name when we saved the embeddings as .pt files.
+            name_list += [os.path.join(os.path.splitext(file)[0]) for file in filenames]  # noqa: E501
+
+        return file_list, name_list
 
     # save PyTorch tensors
     @staticmethod
-    def save_pytorch_tensors(tensor: object, path: str):
+    def save_pytorch_tensors(tensor: object, path: str, tensor_name):
 
-        ts(tensor,  path)
+        file_path = (f'{path}/{tensor_name}')
 
-        logger.info(f'Tensor saved to: {path}')
+        ts(tensor,  file_path)
+
+        logger.info(f'Tensor saved to: {file_path}')
