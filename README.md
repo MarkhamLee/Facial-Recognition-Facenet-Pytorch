@@ -9,22 +9,14 @@ I spent most of the winter and spring '22 researching, prototyping, and testing 
 * Created a 'deployment_utilities' folder that will contain things you could use to prepare to deploy a solution like this. It currently holds a script that can generate embeddings of reference photos, so that when you are doing active photo matches you only need to run ML on day of photos and not the reference photos as well. 
 
 #### 04/19/2024 - Security Updates
-*  Updated the Dockerfile to be smaller and more secure by moving to a two-stage build. The final image is ~2.1GB smaller and has a smaller risk surface area because the tools used to build the Python dependencies are only used in the first/build stage and are then dropped from the final image, as the fully built Python dependencies are just copied over. 
+*  Updated the Dockerfile to be smaller and more secure by moving to a two-stage build. The final image is ~2.1GB smaller and has a smaller risk surface area, due to not including files that are only needed to build dependencies and aren't used to run the application.
 * Updated base image and Python dependencies to address security issues 
 
 #### 03/29/2024
 Made several updates over the last couple of weeks 
 * Real time monitoring via MQTT & InfluxDB - e.g., tracking match %, inferencing latency and similarity over time 
-* Added Github Actions configs to automatically build multi-architecture images whenever new code is pusehd to the repo 
+* Added Github Actions configs to automatically build multi-architecture images whenever new code is pu to the repo 
 * General refactoring, cleaned up the Euclidean similarity calculation 
-
-#### 11/10/2023
-* Refactored unit tests, cleaned up code, better comments, annotations, etc.
-
-#### 9/04/23:
-* Added logging 
-* Added basic unit tests
-* Refactored API calls in Jupyter Notebook, refactored "test_helper" script 
 
 ### How does it work? 
 #### The Short Answer:
