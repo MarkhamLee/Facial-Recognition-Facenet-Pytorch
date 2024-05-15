@@ -8,6 +8,7 @@
 # precomputed tensors. The script will return a dataframe with your testing
 # data in it as well as write it to a log file.
 import os
+import sys
 import torch
 import pandas as pd
 import torch.nn.functional as F
@@ -16,7 +17,11 @@ from statistics import mean, stdev
 from PIL import Image
 from time import time
 
-from common.logging_util import LoggingUtilities  # noqa: E402
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
+
+from common_utils.logging_util import LoggingUtilities  # noqa: E402
+from common_utils.general_utilities import GeneralUtils  # noqa: E402
 
 
 class FacenetBenchmarking:
@@ -26,6 +31,8 @@ class FacenetBenchmarking:
         self.logger = LoggingUtilities.\
             log_file_logger("facenet_benchmarking")
 
+        self.utilities = GeneralUtils()
+
         # check for cuda, configure cudnn
         self.cuda_check()
 
@@ -33,8 +40,8 @@ class FacenetBenchmarking:
         self.mtcnn, self.resnet = self.get_models()\
 
         # get files
-        self.photo_files = self.get_file_lists(photo_path)
-        self.tensor_files = self.get_file_lists(tensor_path)
+        self.photo_files = self.utilities.get_file_list(photo_path)
+        self.tensor_files = self.utilities.get_file_list(tensor_path)
 
         self.logger.info('File lists created')
 
