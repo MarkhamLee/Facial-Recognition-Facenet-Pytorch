@@ -3,6 +3,11 @@ I spent most of the winter and spring '22 researching, prototyping, and testing 
 
 ### Recent Updates
 
+#### 05/15/2024 - Evaluation & Preparation Updates
+* In the 'benchmarking_utils' folder there is a script for testing inference speed. It will break down the results for the face detection and embedding portions of the inference pipeline and it leaves out the first 10 images, so the slower "warm-up" inferences don’t skew the results. 
+
+* Created a 'deployment_utilities' folder that will contain things you could use to prepare to deploy a solution like this. It currently holds a script that can generate embeddings of reference photos, so that when you are doing active photo matches you only need to run ML on day of photos and not the reference photos as well. 
+
 #### 04/19/2024 - Security Updates
 *  Updated the Dockerfile to be smaller and more secure by moving to a two-stage build. The final image is ~2.1GB smaller and has a smaller risk surface area because the tools used to build the Python dependencies are only used in the first/build stage and are then dropped from the final image, as the fully built Python dependencies are just copied over. 
 * Updated base image and Python dependencies to address security issues 
