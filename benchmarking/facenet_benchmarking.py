@@ -147,6 +147,7 @@ class FacenetBenchmarking:
         total_photo_pairs = len(latency_list)
         avg_latency = round(mean(latency_list), 2)
         stdev_latency = round(stdev(latency_list), 2)
+        effective_fps = round((1000/avg_latency), 2)
 
         all_latency_mean = round(mean(all_latency_list), 2)
 
@@ -156,14 +157,16 @@ class FacenetBenchmarking:
         test_data = []
         test_data.append([total_photo_pairs, all_latency_mean,
                           avg_latency, stdev_latency,
-                          face_detection_mean, embedding_mean])
+                          face_detection_mean, embedding_mean,
+                          effective_fps])
 
         df_columns = ["photos",
                       "with_warmp(ms)",
                       "overall(ms)",
                       "overall_stdev(ms)",
                       "face_detection(ms)",
-                      "embedding(ms)"]
+                      "embedding(ms)",
+                      "effective_FPS"]
 
         stats_df = pd.DataFrame(test_data, columns=df_columns)
 
