@@ -40,8 +40,8 @@ class FacenetBenchmarking:
         self.mtcnn, self.resnet = self.get_models()\
 
         # get files
-        self.photo_files = self.utilities.get_file_list(photo_path)
-        self.tensor_files = self.utilities.get_file_list(tensor_path)
+        self.photo_files = self.get_file_lists(photo_path)
+        self.tensor_files = self.get_file_lists(tensor_path)
 
         self.logger.info('File lists created')
 
