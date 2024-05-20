@@ -6,5 +6,5 @@ joblib==1.3.1
 pillow>=10.0.1
 requests==2.31.0
 torch
-Werkzeug==3.0.1
+Werkzeug
 paho-mqtt
