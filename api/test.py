@@ -69,7 +69,7 @@ class TestLogConfiguration(unittest.TestCase):
                          "The score type is wrong")
         self.assertEqual(response['score_threshold'], 0.35,
                          "The score threshold is wrong")
-        self.assertIsNotNone(response['inferencing_latency'],
+        self.assertIsNotNone(response['inferencing_latency(ms)'],
                              "The latency data is missing")
 
     # testing the two photo endpoint with two photos that don't match
@@ -98,7 +98,7 @@ class TestLogConfiguration(unittest.TestCase):
                          "The score type is wrong")
         self.assertEqual(response['score_threshold'], 0.35,
                          "The score threshold is wrong")
-        self.assertIsNotNone(response['inferencing_latency'],
+        self.assertIsNotNone(response['inferencing_latency(ms)'],
                              "The latency data is missing")
 
     # testing the endpoint that you present a photo and a cached/stored set of
@@ -129,7 +129,7 @@ class TestLogConfiguration(unittest.TestCase):
                          "The score type is wrong")
         self.assertEqual(response['score_threshold'], 0.35,
                          "The score threshold is wrong")
-        self.assertIsNotNone(response['inferencing_latency'],
+        self.assertIsNotNone(response['inferencing_latency(ms)'],
                              "The latency data is missing")
 
 

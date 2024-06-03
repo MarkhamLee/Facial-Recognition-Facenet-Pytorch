@@ -153,14 +153,14 @@ def build_response(latency: float, tensor1: object, tensor2: object,
     logger.info(f'match status calculated: {status} from a score of: {score}')
 
     # prepare latency message: rounding + adding units
-    latency_message = str(latency) + " ms"
+    latency_message = latency
 
     # return data
     results = {"match_status": status,
                "score": score,
                "score_type": score_type,
                "score_threshold": threshold,
-               "inferencing_latency": latency_message}
+               "inferencing_latency(ms)": latency_message}
 
     resultjson = json.dumps(results)
 
