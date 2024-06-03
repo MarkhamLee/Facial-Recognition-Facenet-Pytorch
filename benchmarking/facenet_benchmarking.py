@@ -161,11 +161,11 @@ class FacenetBenchmarking:
                           effective_fps])
 
         df_columns = ["photos",
-                      "with_warmp(ms)",
-                      "overall(ms)",
+                      "latency with_warmp(ms)",
+                      "overall latency(ms)",
                       "overall_stdev(ms)",
-                      "face_detection(ms)",
-                      "embedding(ms)",
+                      "face_detection_latency(ms)",
+                      "embedding_latency(ms)",
                       "effective_FPS"]
 
         stats_df = pd.DataFrame(test_data, columns=df_columns)
