@@ -61,15 +61,15 @@ class TestLogConfiguration(unittest.TestCase):
         # convert the JSON string to a python dictionary
         response = json.loads(response.text)
 
-        self.assertEqual(response['Match Status'], 1,
+        self.assertEqual(response['match_status'], 1,
                          "The Match Status is Wrong")
-        self.assertEqual(response['Score'], 0.215,
+        self.assertEqual(response['score'], 0.215,
                          "The Cosine Distance is wrong")
-        self.assertEqual(response['Score Type'], 'cosine distance',
+        self.assertEqual(response['score_type'], 'cosine',
                          "The score type is wrong")
-        self.assertEqual(response['Score Threshold'], 0.35,
+        self.assertEqual(response['score_threshold'], 0.35,
                          "The score threshold is wrong")
-        self.assertIsNotNone(response['Inferencing Latency'],
+        self.assertIsNotNone(response['inferencing_latency'],
                              "The latency data is missing")
 
     # testing the two photo endpoint with two photos that don't match
@@ -90,15 +90,15 @@ class TestLogConfiguration(unittest.TestCase):
 
         # convert the JSON string to a python dictionary
         response = json.loads(response.text)
-        self.assertEqual(response['Match Status'], 0,
+        self.assertEqual(response['match_status'], 0,
                          "The Match Status is Wrong")
-        self.assertEqual(response['Score'], 0.518,
+        self.assertEqual(response['score'], 0.518,
                          "The Cosine Distance is wrong")
-        self.assertEqual(response['Score Type'], 'cosine distance',
+        self.assertEqual(response['score_type'], 'cosine',
                          "The score type is wrong")
-        self.assertEqual(response['Score Threshold'], 0.35,
+        self.assertEqual(response['score_threshold'], 0.35,
                          "The score threshold is wrong")
-        self.assertIsNotNone(response['Inferencing Latency'],
+        self.assertIsNotNone(response['inferencing_latency'],
                              "The latency data is missing")
 
     # testing the endpoint that you present a photo and a cached/stored set of
@@ -121,15 +121,15 @@ class TestLogConfiguration(unittest.TestCase):
         # convert the JSON string to a python dictionary
         response = json.loads(response.text)
 
-        self.assertEqual(response['Match Status'], 1,
+        self.assertEqual(response['match_status'], 1,
                          "The Match Status is Wrong")
-        self.assertEqual(response['Score'], 0.28,
+        self.assertEqual(response['score'], 0.28,
                          "The Cosine Distance is wrong")
-        self.assertEqual(response['Score Type'], 'cosine distance',
+        self.assertEqual(response['score_type'], 'cosine',
                          "The score type is wrong")
-        self.assertEqual(response['Score Threshold'], 0.35,
+        self.assertEqual(response['score_threshold'], 0.35,
                          "The score threshold is wrong")
-        self.assertIsNotNone(response['Inferencing Latency'],
+        self.assertIsNotNone(response['inferencing_latency'],
                              "The latency data is missing")
 
 

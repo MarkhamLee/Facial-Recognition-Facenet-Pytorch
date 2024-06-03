@@ -2,11 +2,9 @@
 # Facial-Recognition-Facenet-Pytorch
 # Flask based API wrapper around the Facenet-PyTorch facial recognition library
 # This script is specifically for the API, receives requests, communicates back
-# to the client, etc. Real time monitoring of match results via an MQTT broker
-# and InfluxDB.
+# to the client, etc.
 import flask
 import json
-import os
 import time
 import torch
 from PIL import Image
@@ -14,7 +12,6 @@ from flask import Flask, request
 from photo_inferencing import Inferencing
 from score_service import SimilarityScore
 from logging_util import logger
-from monitoring import ReportingCommunication
 
 app = Flask('Identity')
 
@@ -25,20 +22,6 @@ logger.info('ML models instantiated')
 # instantiate the class with the scoring functionality
 scoring = SimilarityScore()
 logger.info('Scoring/similarity class instantiated')
-
-# instantiate the communications class
-com_utilities = ReportingCommunication()
-
-# get MQTT Client
-
-# get client ID
-client_id = com_utilities.get_client_id()
-
-# mqtt client
-mqttClient, code = com_utilities.mqttClient(client_id)
-logger.info('Communications class instantiated')
-
-MONITORING_TOPIC = os.environ['MONITORING_TOPIC']
 
 
 # endpoint for API health check
@@ -98,9 +81,6 @@ def embeddings():
     resultjson = build_response(latency, ref_tensor, sample_tensor,
                                 score_type, threshold)
 
-    # send data to MQTT topic for data logging/real time monitoring
-    send_monitoring_message(resultjson)
-
     logger.info('response sent back to client')
     return flask.Response(response=resultjson, status=200,
                           mimetype='application/json')
@@ -148,9 +128,6 @@ def cached():
     resultjson = build_response(latency, cached_tensor, sample_tensor,
                                 score_type, threshold)
     logger.info(resultjson)
-
-    # send data to MQTT topic for data logging/real time monitoring
-    send_monitoring_message(resultjson)
 
     return flask.Response(response=resultjson, status=200,
                           mimetype='application/json')
@@ -200,15 +177,3 @@ def load_images(image: object) -> object:
     app.logger.info('photo loaded')
 
     return photo
-
-
-# TODO: add QOS parameters and message re-send logic
-def send_monitoring_message(message: dict):
-
-    try:
-        result = mqttClient.publish(MONITORING_TOPIC, message)
-        status = result[0]
-        logger.info(f'Monitoring message sent successfully with status {status}')  # noqa: E501
-
-    except Exception as e:
-        logger.error(f'MQTT publishing failed with error: {e}')

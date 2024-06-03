@@ -15,7 +15,7 @@ class SimilarityScore:
     def cosine_score(reference: float, sample: float) -> float:
 
         cosd = F.cosine_similarity(reference, sample)
-        score = (1 - cosd.item())
+        score = round((1 - cosd.item()), 4)
 
         logger.info(f'Cosine distance calculated: {score}')
 
@@ -25,15 +25,11 @@ class SimilarityScore:
     @staticmethod
     def euclidean_distance(reference: float, sample: float) -> float:
 
-        # reference = torch.flatten(reference)
-        # sample = torch.flatten(sample)
-
-        # dist = (reference - sample).norm().item()
         dist = torch.cdist(reference, sample, p=2.0,
                            compute_mode='use_mm_for_euclid_dist_if_necessary')
 
         # pull the float value out of the tensor object
-        dist = dist.item()
+        dist = round((dist.item()), 2)
 
         logger.info(f'Euclidean distance is: {dist}')
 
