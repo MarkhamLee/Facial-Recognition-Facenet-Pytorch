@@ -33,6 +33,8 @@ Note: the above command will only work on Unix based systems, e.g., Linux and OS
 
 * There is also a Jupyter notebook that's preconfigured to connect to the API, which you can use to run quick tests, demos, etc.
 
+* The Docker container is rebuilt automatically via GitHub actions whenever I push new code to the repo and then pushed to Docker Hub.
+
 
 #### The Longer Answer 
 
