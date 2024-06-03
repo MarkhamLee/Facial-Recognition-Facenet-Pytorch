@@ -14,19 +14,41 @@ class Inferencing:
 
     def __init__(self):
 
-        # this enables this class to run on GPU when available without having
-        # to update the code
-        self.device = torch.device('cuda:0' if torch.cuda.is_available()
-                                   else 'cpu')
-        logger.info('Running on device: {}'.format(self.device))
+        # check device type, set appropriate cuda options
+        self.cuda_check()
 
-        # Instantiate face detection class
-        self.mtcnn = MTCNN(160, 30, 20, [0.6, 0.7, 0.7], 0.709, True, True,
-                           None, False, device=self.device)
+        # load models
+        self.mtcnn, self.resnet = self.load_models()
+
+
+    def cuda_check(self):
+
+        if torch.cuda.is_available():
+            self.device = 'cuda:0'
+
+            # the effectiveness of these settings can vary between models,
+            # i.e., I would experiment with them on your HW.
+            torch.backends.cudnn.benchmark = True
+            torch.backends.cudnn.deterministic = False
+
+        else:
+            self.device = 'cpu'
+
+        logger.info(f'Running on device: {self.device}')
+
+    
+    def get_models(self):
+
+        mtcnn = MTCNN(160, 30, 20, [0.6, 0.7, 0.7],
+                      0.709, True, True, None,
+                      False, device=self.device).eval()
 
         # Instantiate Resnet for Facial Geometry (Embeddings)
-        self.resnet = InceptionResnetV1(pretrained='vggface2', classify=True).\
-            eval().to(self.device)
+        resnet = InceptionResnetV1(pretrained='vggface2',
+                                   classify=True).eval().to(self.device)
+
+        return mtcnn, resnet
+
 
     def identity_verify(self, reference: object, sample: object) -> object:
         self.reference = reference
@@ -53,7 +75,7 @@ class Inferencing:
 
         # generate embeddings
         embeddings_sample = self.resnet(sample_cropped.unsqueeze(0)).\
-            detach().cpu()
+            detach()
 
         logger.debug('Embeddings generated for single photo/cached tensor workflow')  # noqa: E501
 
