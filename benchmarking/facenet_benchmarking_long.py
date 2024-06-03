@@ -2,13 +2,16 @@
 # Facial-Recognition-Facenet-Pytorch
 # Benchmarking Script for ML components, i.e., MTCNN for
 # face detection and InceptionResnetV1 for generating
-# embeddings.Usage: just run the script or edit this line
-# at the bottom:
+# embeddings. Usage: just run the script, but make edits
+# to this line at the bottom:
 # test = FacenetBenchmarking("test_photos/", "cached_gpu_tensors/")
-# where the first parameter are your photos and the second one is
-# precomputed tensors. The script will return a dataframe with your testing
-# data in it as well as write it to a log file. Make sure to match tensors
-# to the device they were created on and you're runing this test on.
+# if you want to point to different photos or cached tensors.
+# The script will return a dataframe with your testing data in
+# it as well as write it to a log file.
+# This variant is when you want to run a particularly long test,
+# more helpful for GPUs, as the running the model longer often =
+# significantly lower inferencing times/more akin to real life
+# performance
 import os
 import sys
 import torch
@@ -108,36 +111,43 @@ class FacenetBenchmarking:
         # to keep this simple, just timing how long it takes to attempt
         # to match a pair of photos, w/o considering accuracy and the like.
 
-        for photo, tensor in zip(photo_files, tensor_files):
+        count_test = 0
 
-            sample_photo = Image.open(photo)
+        while count_test < 100:
 
-            start = time()
-            # face detection
-            sample_cropped = self.mtcnn(sample_photo).to(self.device)
-            end_face = time()
+            for photo, tensor in zip(photo_files, tensor_files):
 
-            sample_embeddings = self.resnet(sample_cropped.unsqueeze(0))
-            end_embedding = time()
+                sample_photo = Image.open(photo)
 
-            # load reference embedding
-            reference_embedding = torch.load(tensor)
-            # compare
-            cosd = F.cosine_similarity(reference_embedding, sample_embeddings)
-            score = (1 - cosd.item())  # noqa: F841
-            end = time()
+                start = time()
+                # face detection
+                sample_cropped = self.mtcnn(sample_photo).to(self.device)
+                end_face = time()
 
-            total_latency = round((end - start), 2) * 1000
-            count += 1
+                sample_embeddings = self.resnet(sample_cropped.unsqueeze(0))
+                end_embedding = time()
 
-            all_latency_list.append(total_latency)
+                # load reference embedding
+                reference_embedding = torch.load(tensor)
+                # compare
+                cosd = F.cosine_similarity(reference_embedding,
+                                           sample_embeddings)
+                score = (1 - cosd.item())  # noqa: F841
+                end = time()
 
-            # we exclude the first ten "test runs" to give the model
-            # time to warm-up on GPUs.
-            if count > 10:
-                latency_list.append(total_latency)
-                face_detection_list.append(1000 * (end_face - start))
-                embedding_list.append(1000 * (end_embedding - end_face))
+                total_latency = round((end - start), 2) * 1000
+                count += 1
+
+                all_latency_list.append(total_latency)
+
+                # we exclude the first ten "test runs" to give the model
+                # time to warm-up on GPUs.
+                if count > 10:
+                    latency_list.append(total_latency)
+                    face_detection_list.append(1000 * (end_face - start))
+                    embedding_list.append(1000 * (end_embedding - end_face))
+
+            count_test += 1
 
         self.logger.info('Testing complete, calculating stats....')
         return latency_list, all_latency_list, face_detection_list, \

@@ -18,8 +18,7 @@ class Inferencing:
         self.cuda_check()
 
         # load models
-        self.mtcnn, self.resnet = self.load_models()
-
+        self.mtcnn, self.resnet = self.get_models()
 
     def cuda_check(self):
 
@@ -36,7 +35,6 @@ class Inferencing:
 
         logger.info(f'Running on device: {self.device}')
 
-    
     def get_models(self):
 
         mtcnn = MTCNN(160, 30, 20, [0.6, 0.7, 0.7],
@@ -48,7 +46,6 @@ class Inferencing:
                                    classify=True).eval().to(self.device)
 
         return mtcnn, resnet
-
 
     def identity_verify(self, reference: object, sample: object) -> object:
         self.reference = reference

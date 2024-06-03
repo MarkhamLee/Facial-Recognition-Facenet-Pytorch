@@ -1,26 +1,23 @@
 # (C) Markham 2022 - 2024
 # Facial-Recognition-Facenet-Pytorch
-# Benchmarking Script for API - I.e., sending tensors + photos
-# to an endpoint and timing ML inference + the performance of the
-# API layer. When using make sure to match the tensor type to the
-# device you're using, e.g., CPU vs GPU
-import json 
+# Benchmarking Script for the API endpoint for a
+# cached tensor + a photo, timing the API and
+# inferencing latency. When using make sure to
+# match the tensor type to the device you're using,
+# e.g., CPU vs GPU
+import json
 import os
 import requests
 import sys
-import torch
 import pandas as pd
-import torch.nn.functional as F
-from facenet_pytorch import MTCNN, InceptionResnetV1
 from statistics import mean, stdev
-from PIL import Image
 from time import time
 
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
 from common_utils.logging_util import LoggingUtilities  # noqa: E402
-from common_utils.general_utilities import GeneralUtils  # noqa: E402
+
 
 class FacenetBenchmarking:
 
@@ -38,10 +35,10 @@ class FacenetBenchmarking:
         self.logger.info('File lists created')
 
         # run benchmarking tests
-        all_api_latency_list, all_latency_list, api_latency_list, latency_list = \
-            self.run_tests(self.photo_files,
-                           self.tensor_files,
-                           self.endpoint)
+        all_api_latency_list, all_latency_list, api_latency_list, \
+            latency_list = self.run_tests(self.photo_files,
+                                          self.tensor_files,
+                                          self.endpoint)
 
         # calculate stats
         self.calculate_stats(all_api_latency_list, all_latency_list,
@@ -63,7 +60,6 @@ class FacenetBenchmarking:
         all_api_latency_list = []
         all_latency_list = []
         latency_list = []
-   
 
         # used to exclude the first 10 runs to give the model time to warm-up
         # i.e., the first are slower while the GPU acceleration software
@@ -75,18 +71,17 @@ class FacenetBenchmarking:
 
         for photo, tensor in zip(photo_files, tensor_files):
 
-
             payload = {"type": "cosine", "threshold": 0.35}
 
             files = {'reference': open(tensor, 'rb'),
-                    'sample': open(photo, 'rb')}          
+                     'sample': open(photo, 'rb')}
 
             headers = {}
 
             start = time()
             # send API request
             response = requests.post(endpoint, headers=headers,
-                                 data=payload, files=files)
+                                     data=payload, files=files)
             end = time()
 
             api_latency = 1000 * round((end - start), 2)
@@ -101,10 +96,9 @@ class FacenetBenchmarking:
             inference_latency = int(response['inferencing_latency(ms)'])
 
             count += 1
-            
+
             all_latency_list.append(inference_latency)
             all_api_latency_list.append(api_latency)
-
 
             # we exclude the first ten "test runs" to give the model
             # time to warm-up on GPUs.
@@ -112,13 +106,15 @@ class FacenetBenchmarking:
                 latency_list.append(inference_latency)
                 api_latency_list.append(api_latency)
 
-
         self.logger.info('Testing complete, calculating stats....')
 
-        return all_api_latency_list, all_latency_list, api_latency_list, latency_list
+        return all_api_latency_list, all_latency_list, \
+            api_latency_list, latency_list
 
-    def calculate_stats(self, all_api_latency_list: list, all_latency_list: list,
-                        api_latency_list: list, latency_list: list):
+    def calculate_stats(self, all_api_latency_list: list,
+                        all_latency_list: list,
+                        api_latency_list: list,
+                        latency_list: list):
 
         total_photo_pairs = len(latency_list)
         avg_latency = round(mean(latency_list), 2)
@@ -126,16 +122,16 @@ class FacenetBenchmarking:
 
         api_latency_mean = round(mean(api_latency_list), 2)
         stdev_api_latency = round(stdev(api_latency_list), 2)
-        
 
         all_latency_mean = round(mean(all_latency_list), 2)
-        all_api_latency_mean = round(mean(all_api_latency_list), 2)
+        all_api_latency_mean =\
+            round(mean(all_api_latency_list), 2)  # noqa: F841
         total_latency_mean = avg_latency + api_latency_mean
         effective_fps = round((1000 / total_latency_mean), 2)
 
         test_data = []
         test_data.append([total_photo_pairs, all_latency_mean,
-                          avg_latency, stdev_latency, 
+                          avg_latency, stdev_latency,
                           api_latency_mean, stdev_api_latency,
                           total_latency_mean, effective_fps])
 
