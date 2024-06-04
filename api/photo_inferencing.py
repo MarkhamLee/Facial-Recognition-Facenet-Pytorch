@@ -59,7 +59,7 @@ class Inferencing:
         embeddings_reference = self.resnet(reference_cropped.unsqueeze(0))
         embeddings_sample = self.resnet(sample_cropped.unsqueeze(0))
 
-        logger.debug('Embeddings generated for photo pair')
+        logger.info('Embeddings generated for photo pair')
 
         return embeddings_reference, embeddings_sample
 
@@ -74,6 +74,6 @@ class Inferencing:
         embeddings_sample = self.resnet(sample_cropped.unsqueeze(0)).\
             detach()
 
-        logger.debug('Embeddings generated for single photo/cached tensor workflow')  # noqa: E501
+        logger.info('Embeddings generated for single photo/cached tensor workflow')  # noqa: E501
 
         return embeddings_sample
