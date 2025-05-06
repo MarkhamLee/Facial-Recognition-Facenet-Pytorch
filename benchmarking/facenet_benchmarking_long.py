@@ -93,6 +93,7 @@ class FacenetBenchmarking:
         for (dirpath, dirnames, filenames) in os.walk(path):
             filenames.sort()
             file_list += [os.path.join(dirpath, file) for file in filenames]
+            print(file_list)
 
         return file_list
 
