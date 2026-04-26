@@ -3,3 +3,4 @@ testClient.py
 .ipynb_checkpoints/
 __pycache__/
 requirements2.txt
+/.vscode
